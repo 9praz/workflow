@@ -233,11 +233,16 @@ export default function WorkflowPlanner() {
 
   // ── Optimistic update ─────────────────────────────────────────────────────
 
-  const optimisticUpdate = useCallback((id: string, patch: Partial<Task>) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, ...patch } : t))
-    const { assignees: _, ...dbPatch } = patch as any
-    supabase.from("tasks").update(dbPatch).eq("id", id)
-  }, [])
+const optimisticUpdate = useCallback(async (id: string, patch: Partial<Task>) => {
+  setTasks(prev => prev.map(t => t.id === id ? { ...t, ...patch } : t))
+  const { assignees: _, ...dbPatch } = patch as any
+  if (Object.keys(dbPatch).length === 0) return
+  const { error } = await supabase.from("tasks").update(dbPatch).eq("id", id)
+  if (error) {
+    console.error("update error:", error)
+    fetchAll()
+  }
+}, [fetchAll])
 
   // ── Create task ───────────────────────────────────────────────────────────
 
