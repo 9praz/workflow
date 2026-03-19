@@ -86,16 +86,16 @@ function ConfirmDialog({
         transition: `background 200ms ${SM}, backdrop-filter 200ms ${SM}`,
       }}
       onClick={handleCancel}>
-      <div
-        onClick={e => e.stopPropagation()}
-        style={{
-          transform:  visible ? "translateY(0) scale(1)"     : "translateY(20px) scale(0.95)",
-          opacity:    visible ? 1 : 0,
-          transition: `transform 280ms ${SP}, opacity 220ms ${EZ}`,
-          willChange: "transform, opacity",
-        }}
-        className="bg-white rounded-2xl border border-zinc-100 w-[340px] overflow-hidden"
-        style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)" }}>
+<div
+  onClick={e => e.stopPropagation()}
+  style={{
+    transform:  visible ? "translateY(0) scale(1)"     : "translateY(20px) scale(0.95)",
+    opacity:    visible ? 1 : 0,
+    transition: `transform 280ms ${SP}, opacity 220ms ${EZ}`,
+    willChange: "transform, opacity",
+    boxShadow:  "0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
+  }}
+  className="bg-white rounded-2xl border border-zinc-100 w-[340px] overflow-hidden">
 
         {/* Icon + content */}
         <div className="px-6 pt-6 pb-4 flex flex-col items-center text-center gap-3">
