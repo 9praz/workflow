@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 /**
  * WorkflowPlanner — 120fps edition
  *
