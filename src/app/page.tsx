@@ -95,7 +95,7 @@ function ConfirmDialog({
           willChange: "transform, opacity",
         }}
         className="bg-white rounded-2xl border border-zinc-100 w-[340px] overflow-hidden"
-        style2={{ boxShadow: "0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)" }}>
+        style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)" }}>
 
         {/* Icon + content */}
         <div className="px-6 pt-6 pb-4 flex flex-col items-center text-center gap-3">
