@@ -297,34 +297,37 @@ export default function WorkflowPlanner() {
   const onDragStart = useCallback((id:string) => { dragId.current=id; setDragState(s=>({...s,from:id})) }, [])
   const onDragEnter = useCallback((id:string) => setDragState(s=>({...s,over:id})), [])
 
-  const onDropCol = useCallback((colId:Status) => {
+  const onDropCol = useCallback(async (colId:Status) => {
     const from = dragId.current; if (!from) return
+    dragId.current=null; setDragState({from:null,over:null})
     setTasks(prev => {
       const t = prev.find(x=>x.id===from); if (!t||t.status===colId) return prev
-      const updated = prev.map(x => x.id===from ? {...x,status:colId} : x)
-      supabase.from("tasks").update({status:colId}).eq("id",from)
-      return updated
+      return prev.map(x => x.id===from ? {...x,status:colId} : x)
     })
-    dragId.current=null; setDragState({from:null,over:null})
-  }, [])
+    const { error } = await supabase.from("tasks").update({status:colId}).eq("id",from)
+    if (error) { showToast("ย้ายงานไม่สำเร็จ","error"); fetchAll() }
+  }, [showToast, fetchAll])
 
-  const onDropCard = useCallback((targetId:string, colId:Status) => {
+  const onDropCard = useCallback(async (targetId:string, colId:Status) => {
     const from = dragId.current
     if (!from||from===targetId) { setDragState({from:null,over:null}); return }
+    dragId.current=null; setDragState({from:null,over:null})
+    let reordered: Task[] = []
     setTasks(prev => {
       const moving = prev.find(t=>t.id===from); if (!moving) return prev
       const rest = prev.filter(t=>t.id!==from)
       const idx = rest.findIndex(t=>t.id===targetId)
-      const reordered = [...rest.slice(0,idx+1), {...moving,status:colId}, ...rest.slice(idx+1)]
+      reordered = [...rest.slice(0,idx+1), {...moving,status:colId}, ...rest.slice(idx+1)]
       reordered.forEach((t,i) => { t.order_index=i })
-      supabase.from("tasks").upsert(reordered.map(t=>({
-        id:t.id,status:t.status,order_index:t.order_index,name:t.name,
-        description:t.description,priority:t.priority,progress:t.progress,tags:t.tags,due_date:t.due_date,
-      })))
       return reordered
     })
-    dragId.current=null; setDragState({from:null,over:null})
-  }, [])
+    if (reordered.length === 0) return
+    const { error } = await supabase.from("tasks").upsert(reordered.map(t=>({
+      id:t.id,status:t.status,order_index:t.order_index,name:t.name,
+      description:t.description,priority:t.priority,progress:t.progress,tags:t.tags,due_date:t.due_date,
+    })))
+    if (error) { showToast("ย้ายงานไม่สำเร็จ","error"); fetchAll() }
+  }, [showToast, fetchAll])
 
   // ── Derived ───────────────────────────────────────────────────────────────
 
